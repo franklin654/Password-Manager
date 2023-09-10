@@ -15,6 +15,7 @@ except:
 def switch_command():
     if frame_switch.get():
         frame1.tkraise()
+        frame1.set_choices()
         frame_switch.set(False)
 
     else:
@@ -27,14 +28,17 @@ def launch():
     password_change_window = Toplevel(w)
     password_change_window.title("Change Master Password")
     change_master_password = Label(password_change_window, text="Passphrase:")
-    change_master_password.grid(row=0, column=0, padx=10, pady=10)
+    change_master_password.grid(row=0, column=0, padx=10, pady=30)
     master_password = Entry(password_change_window)
-    master_password.grid(row=0, column=1, padx=10, pady=10)
-    ok_button = ttk.Button(password_change_window, text="Change",
+    master_password.grid(row=0, column=1, padx=10, pady=30)
+    change_button = ttk.Button(password_change_window, text="Change",
                            command=lambda: Password.change_pass_key(master_password.get()))
-    ok_button.grid(row=1, column=0, pady=10, padx=10)
+    change_button.grid(row=1, column=0, pady=10, padx=10)
     cancel_button = ttk.Button(password_change_window, text="cancel", command=pressed_cancel)
     cancel_button.grid(row=1, column=1, pady=10, padx=10)
+    ok_button = ttk.Button(password_change_window, text="Ok", command=pressed_cancel)
+    ok_button.grid(row=1, column=2, pady=10, padx=10)
+
 
 
 def pressed_ok(passphrase: str):

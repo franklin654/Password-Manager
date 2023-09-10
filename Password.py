@@ -3,7 +3,7 @@ import os
 import random
 import string
 from base64 import b64encode, b64decode
-
+from tkinter import messagebox
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA3_256
 from Crypto.Util.Padding import pad, unpad
@@ -114,6 +114,7 @@ class Password:
     def change_pass_key(npk: str):
         hash_pk = Password.__generate_hash(npk)
         Password.update_pass_key(hash_pk)
+        messagebox.showinfo(title="New Password", message="Master Key Successfully Changed", icon="info")
 
     @staticmethod
     def read_hash_file() -> bytes:

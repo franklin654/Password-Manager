@@ -16,7 +16,7 @@ class Show(ttk.Frame):
         self.search_item = tk.StringVar(value="")
         self.search = ttk.Entry(self, textvariable=self.search_item, width=40)
         self.search.grid(row=0, column=0, sticky="ew", padx=10, pady=10, columnspan=2)
-        self.search_item.trace_add("write", self.__set_choices)
+        self.search_item.trace_add("write", self.set_choices)
         self.__choices = [re.sub(r".json", "", i) for i in os.listdir("passwords")]
         self.choices_var = tk.StringVar(value=self.__choices)
         self.Lbox = tk.Listbox(self, listvariable=self.choices_var, width=20, height=len(self.__choices))
@@ -24,11 +24,11 @@ class Show(ttk.Frame):
         self.view_button = ttk.Button(self, text="View", command=self.__get_password)
         self.view_button.grid(row=1, column=1, padx=10, sticky="e")
         self.trial = tk.Text(self, height=1)
-        self.__set_choices()
+        self.set_choices()
         self.copy_button = ttk.Button(self, text="Copy", command=self.__copy_password)
         self.copy_button.grid(row=2, column=1, padx=10, sticky="e")
 
-    def __set_choices(self, *args):
+    def set_choices(self):
         files = [re.sub(r".json", "", i) for i in os.listdir("passwords")]
         pattern = self.search_item.get()
         self.__choices = [x for x in files if re.match(pattern, x)]
@@ -51,7 +51,6 @@ class Show(ttk.Frame):
             self.__last_password = password
             self.trial.insert(tk.END, "username: " + user_name + " password: " + password)
             self.trial.grid(row=3, column=0, columnspan=2, padx=20, pady=10, sticky="ew")
-
 
     def __copy_password(self):
         idx = self.Lbox.curselection()

@@ -21,7 +21,7 @@ class Home(tk.Tk):
         self.submit = ttk.Button(self, text="Submit", command=self.__verify_password)
         self.create_button = ttk.Button(self, text="Create Password", state="disabled")
         self.show_passwords = ttk.Button(self, text="Show Passwords", state="disabled")
-
+        self.__setup_widgets()
 
     def __verify_password(self):
         self.validate = Password.validate_master_password(self.entry.get())

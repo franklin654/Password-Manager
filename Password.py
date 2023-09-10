@@ -133,3 +133,12 @@ class Password:
         h_obj.update(bytes(passphrase, 'utf-8'))
         key: bytes = h_obj.digest()
         return key
+
+    @staticmethod
+    def validate_master_password(passphrase: str) -> bool:
+        password_hash: bytes = Password.__generate_hash(passphrase)
+        with open("hash.txt", "rb") as f:
+            if password_hash == f.read():
+                return True
+            else:
+                return False

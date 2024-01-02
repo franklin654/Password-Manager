@@ -20,15 +20,17 @@ class Show(ttk.Frame):
         self.__choices = [re.sub(r".json", "", i) for i in os.listdir("passwords")]
         self.choices_var = tk.StringVar(value=self.__choices)
         self.Lbox = tk.Listbox(self, listvariable=self.choices_var, width=20, height=len(self.__choices))
-        self.Lbox.grid(row=1, column=0, padx=10, pady=20, sticky="we")
+        self.Lbox.grid(row=1, column=0, padx=10, pady=20, sticky="we", columnspan=2)
         self.view_button = ttk.Button(self, text="View", command=self.__get_password)
-        self.view_button.grid(row=1, column=1, padx=10, sticky="e")
+        self.view_button.grid(row=2, column=0, padx=10, sticky="we")
         self.trial = tk.Text(self, height=1)
         self.set_choices()
         self.copy_button = ttk.Button(self, text="Copy", command=self.__copy_password)
-        self.copy_button.grid(row=2, column=1, padx=10, sticky="e")
+        self.copy_button.grid(row=2, column=1, padx=10, sticky="we")
+        self.delete_button = ttk.Button(self, text="Delete", command=self.__delete_password)
+        self.delete_button.grid(row=3, column=0, columnspan=2, padx=10, pady=10, sticky="we")
 
-    def set_choices(self):
+    def set_choices(self, *args):
         files = [re.sub(r".json", "", i) for i in os.listdir("passwords")]
         pattern = self.search_item.get()
         self.__choices = [x for x in files if re.match(pattern, x)]
@@ -50,7 +52,7 @@ class Show(ttk.Frame):
             user_name, password = p.read_password()
             self.__last_password = password
             self.trial.insert(tk.END, "username: " + user_name + " password: " + password)
-            self.trial.grid(row=3, column=0, columnspan=2, padx=20, pady=10, sticky="ew")
+            self.trial.grid(row=4, column=0, columnspan=2, padx=20, pady=10, sticky="ew")
 
     def __copy_password(self):
         idx = self.Lbox.curselection()
@@ -69,3 +71,27 @@ class Show(ttk.Frame):
             pyperclip.copy(password)
             messagebox.showinfo(title="password_copied", message=f"you copied \"{password}\"",
                                 icon='info')
+
+    def __delete_password(self):
+        try:
+            self.trial.delete(index1="1.0", index2=tk.END)
+        except tkinter.TclError:
+            pass
+        idx = self.Lbox.curselection()
+        if len(idx) == 0:
+            messagebox.showerror(title="web site", message="No website selected please select a message from the list "
+                                                           "below or use the search", icon="error")
+        else:
+            web_site_name = self.__choices[int(idx[0])]
+            if messagebox.askokcancel(title="Warning", message="Are you sure you want to delete the saved password?",
+                                      icon="warning"):
+                try:
+                    os.remove(os.path.join("passwords", web_site_name + ".json"))
+                except FileNotFoundError:
+                    messagebox.showerror(title="file_not_found", message="You may have manually deleted the file while "
+                                                                         "running the program", icon="error")
+                except OSError:
+                    messagebox.showerror(title="Not a file", message="A Folder is being detected", icon="error")
+                self.set_choices()
+            else:
+                pass

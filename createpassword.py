@@ -4,6 +4,7 @@ from tkinter import messagebox
 from Password import Password
 import pyperclip
 
+
 class Create(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -14,7 +15,7 @@ class Create(ttk.Frame):
         self.pass_word_strength = tk.StringVar(value="v")
         self.__password_length = tk.IntVar(value=8)
         self.__num = tk.BooleanVar(value=False)
-        self.__last_password = None
+        self.__last_password = tk.StringVar(value=None)
         label1 = ttk.Label(self, text="Web site Name:", font=('Calibri', 15, 'bold'))
         label1.grid(row=0, column=0, ipadx=10, ipady=20, padx=10)
         self.Entry1 = ttk.Entry(self, textvariable=self.__web_site_name)
@@ -37,7 +38,7 @@ class Create(ttk.Frame):
         self.submit_button.grid(row=5, column=0, pady=10)
         self.Entry1.focus()
         self.password_label = ttk.Label(self, text="", anchor="center")
-        self.trial = tk.Text(self, height=1, width=32)
+        self.trial = tk.Label(self, height=1, width=32, textvariable=self.__last_password, background="white")
         self.copy_button = ttk.Button(self, text="Copy", command=self.__copy_password)
         self.copy_button.grid(row=5, column=1, padx=10, pady=10)
 
@@ -47,7 +48,7 @@ class Create(ttk.Frame):
                                  icon="error")
         else:
             try:
-                self.trial.delete(index1="1.0", index2=tk.END)
+                self.__last_password.set("")
             except tk.TclError:
                 pass
             p = Password(web_site=self.__web_site_name.get(), user_name=self.__user_name.get(), num=self.__num.get(),
@@ -55,13 +56,18 @@ class Create(ttk.Frame):
             self.Entry1.delete(0, "end")
             self.Entry2.delete(0, "end")
             password = p.generate_password(self.__password_length.get())
-            self.__last_password = password
-            self.trial.insert(tk.END, "password: " + password)
+            self.__last_password.set(password)
             self.trial.grid(row=6, column=0, columnspan=2, pady=10)
 
     def __copy_password(self):
         if self.__last_password is None:
-            messagebox.showerror(title="No Password", message="Please generate Password or use the view password option",
+            messagebox.showerror(title="No Password",
+                                 message="Please generate Password or use the view password option",
                                  icon="error")
         else:
-            pyperclip.copy(self.__last_password)
+            pyperclip.copy(self.__last_password.get())
+
+    def clear_password(self):
+        if self.__last_password is not None:
+            self.__last_password.set("")
+            self.trial.grid_remove()

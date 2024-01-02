@@ -14,6 +14,7 @@ except:
 
 def switch_command():
     if frame_switch.get():
+        frame2.clear_password()
         frame1.tkraise()
         frame1.set_choices()
         frame_switch.set(False)
